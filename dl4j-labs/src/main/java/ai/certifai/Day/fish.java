@@ -78,7 +78,7 @@ public class fish {
 
         CollectionRecordReader collectionRR = new CollectionRecordReader(transformedData);
 
-        DataSetIterator dataIter = new RecordReaderDataSetIterator(collectionRR, transformedData.size(), 2, 2, true);
+        DataSetIterator dataIter = new RecordReaderDataSetIterator(collectionRR, transformedData.size(), 1, 1, true);
 
         DataSet allData = dataIter.next();
         allData.shuffle();
@@ -96,6 +96,7 @@ public class fish {
         System.out.println(Arrays.toString(testSet.getFeatures().shape()));
 
         DataNormalization normalizer = new NormalizerMinMaxScaler();
+        normalizer.fitLabel(true);
         normalizer.fit(trainingSet);
 
         normalizer.transform(trainingSet);
