@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class bank {
 
     static int seed = 123;
@@ -132,9 +131,6 @@ public class bank {
 
         ViewIterator trainIter = new ViewIterator(trainingSet, transformedData.size());
         ViewIterator testIter = new ViewIterator(testSet, transformedData.size());
-
-
-
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .seed(seed)

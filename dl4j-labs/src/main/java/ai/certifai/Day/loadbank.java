@@ -19,6 +19,7 @@ import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.serializer.NormalizerSerializer;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -97,16 +98,45 @@ public class loadbank {
 
         MultiLayerNetwork model = MultiLayerNetwork.load(new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/bank.model"), true);
 
-
 //        INDArray output = model.output(allData.getFeatures());
 //        System.out.print("Train Data");
 //        System.out.println(output);
 
-
-
-
         INDArray prediction = model.output(trainIter);
-        System.out.println(prediction);
+        System.out.println(prediction.rows());
+
+        double[][] pre = prediction.toDoubleMatrix();
+        System.out.println(pre.length + "\n");
+
+        int[] out = new int[pre.length];
+        int T = 0;
+        int F = 0;
+        for (int i = 0; i < pre.length; i++) {
+            //System.out.println(i);
+
+            if (pre[i][0] >= pre[i][1]){
+                out[i] = '0';
+                System.out.println("0");
+                F++;
+            }
+            else{
+                out[i] = '1';
+                System.out.println("1");
+                T++;
+            }
+        }
+        System.out.println(F + "\n\n" + T);
+
+        File file = new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/bank.txt");
+        file.createNewFile();
+
+        FileWriter outputfile = new FileWriter("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/bank.txt");
+
+        for (int j = 0; j < out.length; j++) {
+            outputfile.write(out[j]);
+            outputfile.write("\n");
+        }
+        outputfile.close();
 
 
     }
