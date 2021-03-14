@@ -11,12 +11,14 @@ import org.datavec.local.transforms.LocalTransformExecutor;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.common.io.ClassPathResource;
+import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.ViewIterator;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.serializer.NormalizerSerializer;
+import org.nd4j.linalg.factory.Nd4j;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -98,42 +100,23 @@ public class loadbank {
 
         MultiLayerNetwork model = MultiLayerNetwork.load(new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/bank.model"), true);
 
-//        INDArray output = model.output(allData.getFeatures());
-//        System.out.print("Train Data");
-//        System.out.println(output);
-
         INDArray prediction = model.output(trainIter);
-        System.out.println(prediction.rows());
+        INDArray pre = Nd4j.argMax(prediction, 1);
+        System.out.println(pre);
 
-        double[][] pre = prediction.toDoubleMatrix();
-        System.out.println(pre.length + "\n");
+        DataBuffer dataBuffer = pre.data();
+        int[] array = dataBuffer.asInt();
 
-        int[] out = new int[pre.length];
-        int T = 0;
-        int F = 0;
-        for (int i = 0; i < pre.length; i++) {
-            //System.out.println(i);
+        System.out.println(array.length);
 
-            if (pre[i][0] >= pre[i][1]){
-                out[i] = '0';
-                System.out.println("0");
-                F++;
-            }
-            else{
-                out[i] = '1';
-                System.out.println("1");
-                T++;
-            }
-        }
-        System.out.println(F + "\n\n" + T);
 
         File file = new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/bank.txt");
         file.createNewFile();
 
         FileWriter outputfile = new FileWriter("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/bank.txt");
 
-        for (int j = 0; j < out.length; j++) {
-            outputfile.write(out[j]);
+        for (int j = 0; j < array.length; j++) {
+            outputfile.write(String.valueOf(array[j]));
             outputfile.write("\n");
         }
         outputfile.close();

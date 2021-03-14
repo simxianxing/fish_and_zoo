@@ -10,14 +10,18 @@ import org.datavec.local.transforms.LocalTransformExecutor;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.common.io.ClassPathResource;
+import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.dataset.ViewIterator;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.serializer.NormalizerSerializer;
+import org.nd4j.linalg.factory.Nd4j;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +49,6 @@ public class loadmnist {
         while(j < 400){
             alldata.add(csvdata.next());
             j++;
-            System.out.println(j);
         }
 
         List<List<Writable>> transformedData = LocalTransformExecutor.execute(alldata, tp);
@@ -83,15 +86,26 @@ public class loadmnist {
 
         MultiLayerNetwork model = MultiLayerNetwork.load(new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/mnist.model"), true);
 
+        INDArray prediction = model.output(testIter);
+        INDArray pre = Nd4j.argMax(prediction, 1);
+        System.out.println(pre);
 
-       // model.predict(trainingSet);
+        DataBuffer dataBuffer = pre.data();
+        int[] array = dataBuffer.asInt();
 
-        //trainingSet.getLabels();
+        System.out.println(array.length);
 
-        System.out.println(trainingSet.getLabels());
 
-        System.out.print("Train Data");
-        System.out.println(model.output(trainIter));
+        File file = new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/mnist.txt");
+        file.createNewFile();
+
+        FileWriter outputfile = new FileWriter("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/mnist.txt");
+
+        for (int k = 0; k < array.length; k++) {
+            outputfile.write(String.valueOf(array[k]));
+            outputfile.write("\n");
+        }
+        outputfile.close();
 
     }
 }
