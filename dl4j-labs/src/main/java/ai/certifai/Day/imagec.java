@@ -1,99 +1,163 @@
 package ai.certifai.Day;
 
-import org.datavec.api.records.reader.impl.collection.CollectionRecordReader;
+import org.datavec.api.io.filters.BalancedPathFilter;
+import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.split.FileSplit;
-import org.datavec.api.writable.Writable;
+import org.datavec.api.split.InputSplit;
+import org.datavec.image.loader.BaseImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
+import org.datavec.image.transform.*;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.conf.BackpropType;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.inputs.InputType;
-import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
-import org.deeplearning4j.nn.conf.layers.DenseLayer;
-import org.deeplearning4j.nn.conf.layers.OutputLayer;
-import org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
+import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.common.io.ClassPathResource;
+import org.nd4j.common.primitives.Pair;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.dataset.DataSet;
-import org.nd4j.linalg.dataset.ViewIterator;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
-import org.nd4j.linalg.learning.config.Nesterovs;
+import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
+import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
+import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class imagec {
 
-    static int epoch = 1;
-    static int seed = 123;
+    private static Random rng = new Random();
+    private static String[] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
+    private static ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
+    private static BalancedPathFilter bPF = new BalancedPathFilter(rng, allowedExtensions, labelMaker);
+    private static double trainPerc = 0.7;
+    private static int height = 150;
+    private static int width = 150;
+    private static int channel = 3;
+    private static int epoch = 1;
+    private static int seed = 123;
+    private static int batchSize = 1000;
+    private static int numClass = 6;
+    private static double lr = 0.001;
 
     public static void main(String[] args) throws IOException {
 
-        File trainFile = new ClassPathResource("/aitest/natural_images/seg_train/seg_train").getFile();
-        File testFile = new ClassPathResource("/aitest/natural_images/seg_test/seg_test").getFile();
-        FileSplit dataSplite = new FileSplit(trainFile);
-        FileSplit dataSplite2 = new FileSplit(testFile);
+        File file = new ClassPathResource("/aitest/natural_images/seg_train/seg_train").getFile();
 
-        //CSVRecordReader csvdata = new CSVRecordReader(1, ',');
-        ImageRecordReader trainimg = new ImageRecordReader(150, 150, 3);
-        trainimg.initialize(dataSplite);
+        //image Augmentation
+        ImageTransform hFlip = new FlipImageTransform(1);
+        ImageTransform rotate = new RotateImageTransform(15);
+        ImageTransform crop = new CropImageTransform(5);
 
-        ImageRecordReader testimg = new ImageRecordReader(150, 150, 3);
-        testimg.initialize(dataSplite2);
+        //Image transform method, probability of images to get transform
+        List<Pair<ImageTransform, Double>> pipeline = Arrays.asList(
+                new Pair<>(hFlip, 0.2),
+                new Pair<>(rotate, 0.3),
+                new Pair<>(crop, 0.2)
+        );
 
-        List<List<Writable>> traindata = new ArrayList<>();
-
-        while(trainimg.hasNext()){
-            traindata.add(trainimg.next());
-        }
-
-        List<List<Writable>> testdata = new ArrayList<>();
-
-        while(testimg.hasNext()){
-            testdata.add(testimg.next());
-        }
-
-        CollectionRecordReader trainRR = new CollectionRecordReader(traindata);
-        DataSetIterator trainiter = new RecordReaderDataSetIterator(trainRR, traindata.size());
-
-        CollectionRecordReader testRR = new CollectionRecordReader(testdata);
-        DataSetIterator testiter = new RecordReaderDataSetIterator(testRR, testdata.size());
-
-        DataSet testData = testiter.next();
-        DataSet trainData = trainiter.next();
-
-        ViewIterator trainIter = new ViewIterator(trainData, traindata.size());
-        ViewIterator testIter = new ViewIterator(testData, testdata.size());
+        PipelineImageTransform tp = new PipelineImageTransform(pipeline, false);
 
 
+        FileSplit fsplit = new FileSplit(file);
+
+        InputSplit[] allData = fsplit.sample(bPF, trainPerc, 1 - trainPerc);
+        InputSplit trainData = allData[0];
+        InputSplit testData = allData[1];
+
+        ImageRecordReader trainimg = new ImageRecordReader(height, width, channel, labelMaker);
+        trainimg.initialize(trainData, tp);
+
+        ImageRecordReader testimg = new ImageRecordReader(height, width, channel, labelMaker);
+        testimg.initialize(testData);
+
+        System.out.println(testimg.getLabels());
+
+        DataSetIterator trainiter = new RecordReaderDataSetIterator(trainimg, batchSize, 1, numClass);
+        DataSetIterator testiter = new RecordReaderDataSetIterator(testimg, batchSize, 1, numClass);
+
+        DataNormalization scaler = new ImagePreProcessingScaler();
+        trainiter.setPreProcessor(scaler);
+        testiter.setPreProcessor(scaler);
 
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .seed(seed)
-                .updater(new Nesterovs(0.01, Nesterovs.DEFAULT_NESTEROV_MOMENTUM))
+                .updater(new Adam(lr))
                 .weightInit(WeightInit.XAVIER)
                 .list()
-                .layer(0, new ConvolutionLayer.Builder(5, 5)
-                        .nIn(3)
+                .layer(0, new ConvolutionLayer.Builder()
+                        .kernelSize(5, 5)
+                        .nIn(channel)
                         .stride(1, 1)
-                        .nOut(20)
-                        .activation(Activation.IDENTITY)
+                        .nOut(32)
+                        .activation(Activation.RELU)
                         .build())
                 .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
-                        .kernelSize(2, 2)
+                        .kernelSize(3, 3)
                         .stride(2, 2)
                         .build())
-                .layer(2, new DenseLayer.Builder().activation(Activation.RELU)
-                        .nOut(50).build())
-                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-                        .nOut(2)
+                .layer(2, new ConvolutionLayer.Builder()
+                        .kernelSize(3, 3)
+                        .stride(1, 1)
+                        .nOut(32)
+                        .activation(Activation.RELU)
+                        .build())
+                .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
+                        .kernelSize(3, 3)
+                        .stride(2, 2)
+                        .build())
+                .layer(4, new ConvolutionLayer.Builder()
+                        .kernelSize(3, 3)
+                        .stride(1, 1)
+                        .nOut(64)
+                        .activation(Activation.RELU)
+                        .build())
+                .layer(5, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
+                        .kernelSize(3, 3)
+                        .stride(2, 2)
+                        .build())
+                .layer(6, new ConvolutionLayer.Builder()
+                        .kernelSize(3, 3)
+                        .stride(1, 1)
+                        .nOut(64)
+                        .activation(Activation.RELU)
+                        .build())
+                .layer(7, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
+                        .kernelSize(3, 3)
+                        .stride(2, 2)
+                        .build())
+                .layer(8, new ConvolutionLayer.Builder()
+                        .kernelSize(3, 3)
+                        .stride(1, 1)
+                        .nOut(128)
+                        .activation(Activation.RELU)
+                        .build())
+                .layer(9, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
+                        .kernelSize(3, 3)
+                        .stride(2, 2)
+                        .build())
+                .layer(10, new DenseLayer.Builder()
+                        .activation(Activation.RELU)
+                        .nOut(64)
+                        .build())
+                .layer(11, new DenseLayer.Builder()
+                        .activation(Activation.RELU)
+                        .nOut(32)
+                        .build())
+                .layer(12, new DenseLayer.Builder()
+                        .activation(Activation.RELU)
+                        .nOut(16)
+                        .build())
+                .layer(13, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                        .nOut(6)
                         .activation(Activation.SOFTMAX)
                         .build())
                 .setInputType(InputType.convolutionalFlat(150, 150, 3)) // InputType.convolutional for normal image
@@ -102,18 +166,18 @@ public class imagec {
 
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         model.init();
-        model.setListeners(new ScoreIterationListener(10));
+        model.setListeners(new ScoreIterationListener(batchSize));
 
         Evaluation eval;
         for(int i = 1; i <=  epoch; i++){
-            model.fit(trainIter);
-            eval = model.evaluate(trainIter);
+            model.fit(trainiter);
+            eval = model.evaluate(trainiter);
             System.out.println("EPOCH: " + i + " Accuracy: " + eval.accuracy());
         }
 
         //  Evaluating the outcome of our trained model
-        Evaluation evalTrain = model.evaluate(trainIter);
-        Evaluation evalTest = model.evaluate(testIter);
+        Evaluation evalTrain = model.evaluate(trainiter);
+        Evaluation evalTest = model.evaluate(testiter);
         System.out.print("Train Data");
         System.out.println(evalTrain.stats());
 
