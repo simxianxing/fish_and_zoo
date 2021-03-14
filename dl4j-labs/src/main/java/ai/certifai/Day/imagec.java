@@ -42,7 +42,7 @@ public class imagec {
     private static int height = 150;
     private static int width = 150;
     private static int channel = 3;
-    private static int epoch = 1;
+    private static int epoch = 10;
     private static int seed = 123;
     private static int batchSize = 1000;
     private static int numClass = 6;
@@ -73,6 +73,7 @@ public class imagec {
         InputSplit trainData = allData[0];
         InputSplit testData = allData[1];
 
+
         ImageRecordReader trainimg = new ImageRecordReader(height, width, channel, labelMaker);
         trainimg.initialize(trainData, tp);
 
@@ -81,8 +82,8 @@ public class imagec {
 
         System.out.println(testimg.getLabels());
 
-        DataSetIterator trainiter = new RecordReaderDataSetIterator(trainimg, batchSize, 1, numClass);
-        DataSetIterator testiter = new RecordReaderDataSetIterator(testimg, batchSize, 1, numClass);
+        DataSetIterator trainiter = new RecordReaderDataSetIterator(trainimg, (int) (0.7*batchSize), 1, numClass);
+        DataSetIterator testiter = new RecordReaderDataSetIterator(testimg, (int) (0.3*batchSize), 1, numClass);
 
         DataNormalization scaler = new ImagePreProcessingScaler();
         trainiter.setPreProcessor(scaler);
@@ -97,7 +98,7 @@ public class imagec {
                         .kernelSize(5, 5)
                         .nIn(channel)
                         .stride(1, 1)
-                        .nOut(32)
+                        .nOut(16)
                         .activation(Activation.RELU)
                         .build())
                 .layer(1, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
@@ -107,7 +108,7 @@ public class imagec {
                 .layer(2, new ConvolutionLayer.Builder()
                         .kernelSize(3, 3)
                         .stride(1, 1)
-                        .nOut(32)
+                        .nOut(16)
                         .activation(Activation.RELU)
                         .build())
                 .layer(3, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
@@ -117,7 +118,7 @@ public class imagec {
                 .layer(4, new ConvolutionLayer.Builder()
                         .kernelSize(3, 3)
                         .stride(1, 1)
-                        .nOut(64)
+                        .nOut(32)
                         .activation(Activation.RELU)
                         .build())
                 .layer(5, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
@@ -127,36 +128,26 @@ public class imagec {
                 .layer(6, new ConvolutionLayer.Builder()
                         .kernelSize(3, 3)
                         .stride(1, 1)
-                        .nOut(64)
+                        .nOut(32)
                         .activation(Activation.RELU)
                         .build())
                 .layer(7, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
                         .kernelSize(3, 3)
                         .stride(2, 2)
                         .build())
-                .layer(8, new ConvolutionLayer.Builder()
-                        .kernelSize(3, 3)
-                        .stride(1, 1)
-                        .nOut(128)
-                        .activation(Activation.RELU)
-                        .build())
-                .layer(9, new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
-                        .kernelSize(3, 3)
-                        .stride(2, 2)
-                        .build())
-                .layer(10, new DenseLayer.Builder()
-                        .activation(Activation.RELU)
-                        .nOut(64)
-                        .build())
-                .layer(11, new DenseLayer.Builder()
+                .layer(8, new DenseLayer.Builder()
                         .activation(Activation.RELU)
                         .nOut(32)
                         .build())
-                .layer(12, new DenseLayer.Builder()
+                .layer(9, new DenseLayer.Builder()
+                        .activation(Activation.RELU)
+                        .nOut(32)
+                        .build())
+                .layer(10, new DenseLayer.Builder()
                         .activation(Activation.RELU)
                         .nOut(16)
                         .build())
-                .layer(13, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+                .layer(11, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
                         .nOut(6)
                         .activation(Activation.SOFTMAX)
                         .build())
@@ -165,8 +156,10 @@ public class imagec {
                 .build();
 
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
+
         model.init();
-        model.setListeners(new ScoreIterationListener(batchSize));
+        System.out.println(model.summary());
+        model.setListeners(new ScoreIterationListener(1));
 
         Evaluation eval;
         for(int i = 1; i <=  epoch; i++){
@@ -183,6 +176,8 @@ public class imagec {
 
         System.out.print("Test Data");
         System.out.print(evalTest.stats());
+
+        model.save(new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/imagec.model"));
 
 
     }
