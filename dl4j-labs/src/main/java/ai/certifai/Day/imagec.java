@@ -42,7 +42,7 @@ public class imagec {
     private static int height = 150;
     private static int width = 150;
     private static int channel = 3;
-    private static int epoch = 10;
+    private static int epoch = 100;
     private static int seed = 123;
     private static int batchSize = 1000;
     private static int numClass = 6;
@@ -181,4 +181,5 @@ public class imagec {
 
 
     }
+
 }
