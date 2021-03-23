@@ -5,15 +5,16 @@ import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.split.InputSplit;
 import org.datavec.image.loader.BaseImageLoader;
-import org.datavec.image.recordreader.ImageRecordReader;
+import org.datavec.image.recordreader.objdetect.ObjectDetectionRecordReader;
+import org.datavec.image.recordreader.objdetect.impl.VocLabelProvider;
 import org.datavec.image.transform.ImageTransform;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Random;
 
 public class moesecodeiterator {
@@ -25,6 +26,9 @@ public class moesecodeiterator {
     private static InputSplit trainData, testData;
     private int width, height, channel, batchSize, numClass;
     private ImageTransform tp;
+    private Path dir;
+    public static final int gridWidth = 13;
+    public static final int gridHeight = 13;
 
     public moesecodeiterator(){
         //constructor
@@ -42,32 +46,32 @@ public class moesecodeiterator {
         trainData = allData[0];
         testData = allData[1];
         tp = tpA;
+        dir = file.toPath();
 
         System.out.println(trainData.length());
+        System.out.println(testData.length());
 
     }
 
-    public DataSetIterator getTrain() throws IOException {
-        return makeIterator(trainData, true);
+    public RecordReaderDataSetIterator getTrain(int batchSize) throws Exception {
+        return makeIterator(trainData, dir, batchSize);
     }
 
-    public DataSetIterator getTest() throws IOException {
-        return makeIterator(testData, false);
+    public RecordReaderDataSetIterator getTest(int batchSize) throws Exception {
+        return makeIterator(testData, dir, batchSize);
     }
 
-    private DataSetIterator makeIterator(InputSplit data, boolean train) throws IOException {
-        ImageRecordReader rr = new ImageRecordReader(height, width, channel, labelMaker);
+    private RecordReaderDataSetIterator makeIterator(InputSplit data, Path dir, int batchSize) throws IOException {
 
-        if(train){
-            rr.initialize(data, tp);
-        }
-        else {
-            rr.initialize(data);
-        }
+        ObjectDetectionRecordReader recordReader = new ObjectDetectionRecordReader(height, width, channel, gridHeight, gridWidth, new VocLabelProvider(dir.toString()));
 
-        DataSetIterator iter = new RecordReaderDataSetIterator(rr, batchSize, 1, numClass);
-         DataNormalization scaler = new ImagePreProcessingScaler();
+        recordReader.initialize(data);
+
+        RecordReaderDataSetIterator iter = new RecordReaderDataSetIterator(recordReader, batchSize, 1, 1, true);
+        DataNormalization scaler = new ImagePreProcessingScaler(0, 1);
         iter.setPreProcessor(scaler);
+
+        System.out.println(iter.toString());
 
         return iter;
 

@@ -18,6 +18,7 @@ import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.ui.api.UIServer;
 import org.deeplearning4j.ui.model.stats.StatsListener;
 import org.deeplearning4j.ui.model.storage.InMemoryStatsStorage;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.common.io.ClassPathResource;
 import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
@@ -64,7 +65,7 @@ public class mnist {
         while(j < 40000){
             alldata.add(csvdata.next());
             j++;
-            System.out.println(j);
+            //System.out.println(j);
         }
 
         List<List<Writable>> transformedData = LocalTransformExecutor.execute(alldata, tp);
@@ -168,7 +169,7 @@ public class mnist {
         System.out.print("Test Data");
         System.out.print(evalTest.stats());
 
-        model.save(new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/mnist_2.model"));
+        ModelSerializer.writeModel(model, new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/mnist_2.zip"), true);
 
 
     }

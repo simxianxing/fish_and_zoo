@@ -16,6 +16,7 @@ import org.deeplearning4j.nn.conf.layers.*;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.common.io.ClassPathResource;
 import org.nd4j.common.primitives.Pair;
 import org.nd4j.evaluation.classification.Evaluation;
@@ -177,7 +178,7 @@ public class imagec {
         System.out.print("Test Data");
         System.out.print(evalTest.stats());
 
-        model.save(new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/imagec.model"));
+        ModelSerializer.writeModel(model, new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/imagec.zip"), true);
 
 
     }

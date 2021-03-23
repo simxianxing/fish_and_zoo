@@ -9,6 +9,7 @@ import org.datavec.api.writable.Writable;
 import org.datavec.local.transforms.LocalTransformExecutor;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.common.io.ClassPathResource;
 import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -61,7 +62,7 @@ public class loadmnist {
         DataSetIterator dataIter = new RecordReaderDataSetIterator(collectionRR, transformedData.size(),-1,10);
 
         DataSet allData = dataIter.next();
-        allData.shuffle();
+        //allData.shuffle();
 
         System.out.println(allData);
 
@@ -84,7 +85,8 @@ public class loadmnist {
         ViewIterator trainIter = new ViewIterator(trainingSet, transformedData.size());
         ViewIterator testIter = new ViewIterator(testSet, transformedData.size());
 
-        MultiLayerNetwork model = MultiLayerNetwork.load(new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/mnist.model"), true);
+        MultiLayerNetwork model = ModelSerializer.restoreMultiLayerNetwork(new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/mnist_2.zip"));
+        //MultiLayerNetwork model = MultiLayerNetwork.load(new File("D:/TrainingLabs-main/dl4j-labs/src/main/java/ai/certifai/Day/mnist.model"), true);
 
         INDArray prediction = model.output(testIter);
         INDArray pre = Nd4j.argMax(prediction, 1);
