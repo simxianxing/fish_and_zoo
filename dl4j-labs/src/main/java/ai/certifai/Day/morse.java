@@ -78,7 +78,7 @@ public class morse {
 
     private static JFrame outframe = new JFrame();
     private static Container cp = outframe.getContentPane();
-    private static String codeimage = "D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\MorseCodeDecoder.jpg";
+    private static String codeimage = "D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\MorseCodeDecoderresize.jpg";
     private static ImageIcon list = new ImageIcon(codeimage);
     private static ImageIcon image = new ImageIcon("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\M.png");
     private static JTextArea text = new JTextArea(3, 27);
