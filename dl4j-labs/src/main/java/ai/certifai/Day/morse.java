@@ -36,6 +36,9 @@ import org.nd4j.linalg.learning.config.Adam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.List;
@@ -58,19 +61,28 @@ public class morse {
     private static int batchSize = 10;
     private static int nEpochs = 100;
     private static double learningRate = 1e-4;
-    private static int nClasses = 5;
+    private static int nClasses = 6;
     private static List<String> labels;
 
-    private static File modelFilename = new File("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\MorseCodeDecoder_yolov2_kokyong.zip");
+    private static File modelFilename = new File("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\m6_epoch100.zip");
     private static ComputationGraph model;
     private static Frame frame = null;
     private static final Scalar GREEN = RGB(0, 255.0, 0);
     private static final Scalar YELLOW = RGB(255, 255, 0);
     private static final Scalar RED = RGB(255, 0, 0);
     private static final Scalar BLUE = RGB(0, 0, 255);
-    private static final Scalar BLACK = RGB(255, 255, 255);
-    private static Scalar[] colormap = {GREEN, YELLOW, RED, BLUE, BLACK};
+    private static final Scalar WHITE = RGB(255, 255, 255);
+    private static final Scalar BLACK = RGB(10, 10, 10);
+    private static Scalar[] colormap = {GREEN, YELLOW, RED, BLUE, BLACK, WHITE};
     private static String labeltext = null;
+
+    private static JFrame outframe = new JFrame();
+    private static Container cp = outframe.getContentPane();
+    private static String codeimage = "D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\MorseCodeDecoder.jpg";
+    private static ImageIcon list = new ImageIcon(codeimage);
+    private static ImageIcon image = new ImageIcon("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\M.png");
+    private static JTextArea text = new JTextArea(3, 27);
+
 
     public static void main(String[] args) throws Exception {
 
@@ -126,6 +138,36 @@ public class morse {
         //     STEP 3: Evaluate the model's accuracy by using the test iterator.
         //OfflineValidationWithTestDataset(testIter);
         //     STEP 4: Inference the model and process the webcam stream and make predictions.
+
+        cp.setLayout(new FlowLayout());
+        outframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        outframe.setLocationRelativeTo(null);  // center the application window
+        outframe.setVisible(true);
+        outframe.setTitle("Morse Code Decoder");
+        outframe.setSize(350,600);
+        outframe.setResizable(false);
+        outframe.setForeground(Color.CYAN);
+        outframe.setIconImage(image.getImage());
+        Border border = BorderFactory.createLineBorder(Color.BLUE);
+        JLabel label1 = new JLabel(); //use for table
+        label1.setFont(new Font(Font.DIALOG, Font.BOLD, 18));
+        label1.setText("Welcome to Morse Code Decoder");
+        label1.setIcon(list);
+        label1.setHorizontalTextPosition(JLabel.CENTER);
+        label1.setVerticalTextPosition(JLabel.TOP);
+        label1.setHorizontalAlignment(JLabel.LEFT);
+        label1.setVerticalAlignment(JLabel.TOP);
+        label1.setBorder(border);
+        label1.setPreferredSize(new Dimension(324,459));
+        label1.setBounds(0,0,330,464);
+        cp.add(label1);
+
+        text.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 20));
+        text.setEditable(false);
+        text.setForeground(Color.BLUE);
+        text.setBackground(Color.CYAN);
+        cp.add(text);
+
         doInference();
     }
 
@@ -310,7 +352,7 @@ public class morse {
             rectangle(mat, new Point(x1 + 2, y2 - 2), new Point(x1 + 2 + textSize.get(0), y2 - 2 - textSize.get(1)), colormap[obj.getPredictedClass()], FILLED, 0, 0);
             putText(mat, labeltext, new Point(x1 + 2, y2 - 2), FONT_HERSHEY_DUPLEX, 1, RGB(0, 0, 0));
 
-            printoutput.getAlphabet(label);
+            printoutput.getAlphabet(label, outframe, cp, text);
         }
         return mat;
     }

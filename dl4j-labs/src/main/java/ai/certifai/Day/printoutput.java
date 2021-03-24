@@ -13,12 +13,11 @@ public class printoutput {
     private static boolean startnewchar;
     private static String alphabet;
     private static char predicted, character;
-    private static JFrame frame = new JFrame("Morse Code Decoder");
-    private static Container cp = frame.getContentPane();
-    private static String imagename = "D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\download.png";
-    private static ImageIcon icon = new ImageIcon(imagename);
+    private static JFrame frame;
+    private static Container cp;
+    private static JTextArea text;
 
-    public static void getAlphabet(String labelA){
+    public static void getAlphabet(String labelA, JFrame frameA, Container cpA, JTextArea textA){
 
         label = labelA;
         outlist.add(label);
@@ -26,7 +25,7 @@ public class printoutput {
         if (label.equals("0")){
             finallist.add(" ");
             predicted = ' ';
-            getWindow(predicted);
+            getWindow(predicted, frameA, cpA, textA);
         }
         if (label.equals("3")){
             startnewchar = true;
@@ -153,7 +152,7 @@ public class printoutput {
                 outlist.clear();
                 //System.out.println(finallist.toString());
 
-                getWindow(predicted);
+                getWindow(predicted, frameA, cpA, textA);
             }
 
         }
@@ -162,28 +161,39 @@ public class printoutput {
         }
     }
 
-    public static void getWindow(char characterA){
+    public static void getWindow(char characterA, JFrame frameA, Container cpA, JTextArea textA){
+        text = textA;
+        frame = frameA;
+        cp = cpA;
         character = characterA;
         System.out.print(character);
 
-        cp.setLayout(new FlowLayout());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);  // or pack() the components
-        frame.setLocationRelativeTo(null);  // center the application window
-        frame.setVisible(true);             // show it
+//        cp.setLayout(new FlowLayout());
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setSize(400, 300);  // or pack() the components
+//        frame.setLocationRelativeTo(null);  // center the application window
+//        frame.setVisible(true);             // show it
 
-        JLabel label = new JLabel(icon, SwingConstants.CENTER);
-        //label.setFont(new Font(Font.DIALOG, Font.ITALIC, 14));
-        //label.setOpaque(true);  // needed for JLabel to show the background color
-        //label.setBackground(new Color(204, 238, 241));  // light blue
-        //label.setForeground(Color.RED);                 // foreground text color
-        label.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
-        //label.setToolTipText("This is a JLabel");  // Tool tip
-        cp.add(label);
+//        JLabel label = new JLabel(icon, SwingConstants.CENTER);
+//        //label.setFont(new Font(Font.DIALOG, Font.ITALIC, 14));
+//        //label.setOpaque(true);  // needed for JLabel to show the background color
+//        //label.setBackground(new Color(204, 238, 241));  // light blue
+//        //label.setForeground(Color.RED);                 // foreground text color
+//        label.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
+//        //label.setToolTipText("This is a JLabel");  // Tool tip
+//        cp.add(label);
 
-        JTextField text = new JTextField(String.valueOf(character), 15);
-        text.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 15));
+//        JTextArea text = new JTextArea();
+//        text.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 20));
+//        text.setEditable(false);
+//        text.setForeground(Color.BLUE);
+        //text.setBackground(Color.CYAN);
+        text.append(String.valueOf(character));
         cp.add(text);
+        //SwingUtilities.updateComponentTreeUI(frame);
+        frame.invalidate();
+        frame.validate();
+        frame.repaint();
 
 
 
