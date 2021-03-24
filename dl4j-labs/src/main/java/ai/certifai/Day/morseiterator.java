@@ -51,8 +51,8 @@ public class morseiterator {
 
     public static void setup() throws IOException {
         log.info("Load data...");
-        trainDir = Paths.get("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\resources\\finger\\train");
-        testDir = Paths.get("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\resources\\finger\\test");
+        trainDir = Paths.get("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\resources\\morseData6class\\train");
+        testDir = Paths.get("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\resources\\morseData6class\\test");
         trainData = new FileSplit(new File(trainDir.toString()), NativeImageLoader.ALLOWED_FORMATS, rng);
         testData = new FileSplit(new File(testDir.toString()), NativeImageLoader.ALLOWED_FORMATS, rng);
     }
