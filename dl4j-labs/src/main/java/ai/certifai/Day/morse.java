@@ -72,7 +72,7 @@ public class morse {
     private static final Scalar RED = RGB(255, 0, 0);
     private static final Scalar BLUE = RGB(0, 0, 255);
     private static final Scalar WHITE = RGB(255, 255, 255);
-    private static final Scalar BLACK = RGB(10, 10, 10);
+    private static final Scalar BLACK = RGB(100, 100, 100);
     private static Scalar[] colormap = {GREEN, YELLOW, RED, BLUE, BLACK, WHITE};
     private static String labeltext = null;
 

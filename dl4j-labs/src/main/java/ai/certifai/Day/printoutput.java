@@ -10,7 +10,7 @@ public class printoutput {
     private static ArrayList<String> outlist = new ArrayList<>();
     private static ArrayList<String> finallist = new ArrayList<>();
     private static String label;
-    private static boolean startnewchar;
+    private static boolean startnewchar, spacedone;
     private static String alphabet;
     private static char predicted, character;
     private static JFrame frame;
@@ -22,13 +22,15 @@ public class printoutput {
         label = labelA;
         outlist.add(label);
 
-        if (label.equals("0")){
+        if (spacedone && label.equals("4")){
             finallist.add(" ");
             predicted = ' ';
+            spacedone = false;
             getWindow(predicted, frameA, cpA, textA);
         }
         if (label.equals("3")){
             startnewchar = true;
+            spacedone = true;
             outlist.clear();
         }
         if (startnewchar && label.equals("5")){
@@ -36,7 +38,7 @@ public class printoutput {
                 alphabet = outlist.get(0);
                 for (int i = 0; i < outlist.size() - 1; i++) {
                     if (outlist.get(i) != outlist.get(i + 1)){
-                        if (!outlist.get(i + 1).equals("4") && !outlist.get(i + 1).equals("5")){
+                        if (!outlist.get(i + 1).equals("0") && !outlist.get(i + 1).equals("5")){
                             alphabet = alphabet + outlist.get(i + 1);
                         }
                     }
@@ -156,7 +158,7 @@ public class printoutput {
             }
 
         }
-        if (label.equals("1") || label.equals("2")){
+        if (label.equals("1") || label.equals("2") || label.equals("0")){
             outlist.add(label);
         }
     }
