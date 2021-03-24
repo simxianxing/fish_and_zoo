@@ -199,7 +199,7 @@ public class morse {
     }
 
     // Stream video frames from Webcam and run them through YOLOv2 model and get predictions
-    private static void doInference() {
+    static void doInference() {
 
         String cameraPos = "front";
         int cameraNum = 0;
@@ -311,10 +311,7 @@ public class morse {
             putText(mat, labeltext, new Point(x1 + 2, y2 - 2), FONT_HERSHEY_DUPLEX, 1, RGB(0, 0, 0));
 
             printoutput.getAlphabet(label);
-
-
         }
         return mat;
-
     }
 }
