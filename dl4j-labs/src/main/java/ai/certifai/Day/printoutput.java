@@ -143,7 +143,7 @@ public class printoutput {
         cp = cpA; //recall the container
         character = characterA; //recall the final prediction (Alphabet)
 
-        if (textlength == count+1){
+        if (textlength == count){
             System.out.print("\n"); //print new line on terminal
             text.append("\n"); //print new line on Text Area
             cp.add(text); //add to container (window)

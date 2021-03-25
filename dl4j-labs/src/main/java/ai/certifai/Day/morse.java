@@ -137,7 +137,7 @@ public class morse {
         outframe.setLocation(1000, 100);  // location on screen
         outframe.setVisible(true);
         outframe.setTitle("Morse Code Decoder");
-        outframe.setSize(350,610);
+        outframe.setSize(350,615);
         outframe.setResizable(false);
         outframe.setIconImage(image.getImage()); //icon M.png
         Border border = BorderFactory.createLineBorder(Color.BLACK, 2); //border
@@ -150,7 +150,7 @@ public class morse {
         label1.setHorizontalAlignment(JLabel.LEFT);
         label1.setVerticalAlignment(JLabel.TOP);
         label1.setBorder(border);
-        label1.setPreferredSize(new Dimension(324,459)); //fix the dimension
+        label1.setPreferredSize(new Dimension(324,465)); //fix the dimension
         cp.add(label1);
 
         text.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 20));
