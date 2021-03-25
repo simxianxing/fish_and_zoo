@@ -43,7 +43,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.List;
 
-import static org.bytedeco.opencv.global.opencv_core.CV_8U;
 import static org.bytedeco.opencv.global.opencv_core.flip;
 import static org.bytedeco.opencv.global.opencv_imgproc.*;
 import static org.bytedeco.opencv.helper.opencv_core.RGB;
@@ -86,42 +85,38 @@ public class morse {
 
     public static void main(String[] args) throws Exception {
 
-        //        STEP 1 : Create iterators
+        //Create iterators
         morseiterator.setup();
         RecordReaderDataSetIterator trainIter = morseiterator.trainIterator(batchSize);
         RecordReaderDataSetIterator testIter = morseiterator.testIterator(1);
         labels = trainIter.getLabels();
 
-        //        If model does not exist, train the model, else directly go to model evaluation and then run real time object detection inference.
+        //If model does not exist, train the model, else directly go to model evaluation and then run real time object detection inference.
         if (modelFilename.exists()) {
-            //        STEP 2 : Load trained model from previous execution
+            //Load trained model from previous execution
             Nd4j.getRandom().setSeed(seed);
             log.info("Load model...");
             model = ModelSerializer.restoreComputationGraph(modelFilename);
         } else {
             Nd4j.getRandom().setSeed(seed);
             INDArray priors = Nd4j.create(priorBoxes);
-            //     STEP 2 : Train the model using Transfer Learning
-            //     STEP 2.1: Transfer Learning steps - Load TinyYOLO prebuilt model.
+            //Train the model using Transfer Learning
+            //Transfer Learning steps - Load TinyYOLO prebuilt model.
             log.info("Build model...");
             ComputationGraph pretrained = (ComputationGraph) YOLO2.builder().build().initPretrained();
 
-            //     STEP 2.2: Transfer Learning steps - Model Configurations.
+            //Transfer Learning steps - Model Configurations.
             FineTuneConfiguration fineTuneConf = getFineTuneConfiguration();
 
-            //     STEP 2.3: Transfer Learning steps - Modify prebuilt model's architecture
+            //Transfer Learning steps - Modify prebuilt model's architecture
             model = getComputationGraph(pretrained, priors, fineTuneConf);
             System.out.println(model.summary(InputType.convolutional(
                     morseiterator.yoloheight,
                     morseiterator.yolowidth,
                     nClasses)));
 
-            //     STEP 2.4: Training and Save model.
+            //raining and Save model.
             log.info("Train model...");
-//            UIServer server = UIServer.getInstance();
-//            StatsStorage storage = new InMemoryStatsStorage();
-//            server.attach(storage);
-//            model.setListeners(new ScoreIterationListener(1), new StatsListener(storage));
 
             model.setListeners(new ScoreIterationListener(1));
 
@@ -135,39 +130,36 @@ public class morse {
             ModelSerializer.writeModel(model, modelFilename, true);
             System.out.println("Model saved.");
         }
-        //     STEP 3: Evaluate the model's accuracy by using the test iterator.
-        //OfflineValidationWithTestDataset(testIter);
-        //     STEP 4: Inference the model and process the webcam stream and make predictions.
 
+        //open window
         cp.setLayout(new FlowLayout());
         outframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        outframe.setLocationRelativeTo(null);  // center the application window
+        outframe.setLocation(1000, 100);  // location on screen
         outframe.setVisible(true);
         outframe.setTitle("Morse Code Decoder");
-        outframe.setSize(350,600);
+        outframe.setSize(350,610);
         outframe.setResizable(false);
-        outframe.setForeground(Color.CYAN);
-        outframe.setIconImage(image.getImage());
-        Border border = BorderFactory.createLineBorder(Color.BLUE);
+        outframe.setIconImage(image.getImage()); //icon M.png
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 2); //border
         JLabel label1 = new JLabel(); //use for table
         label1.setFont(new Font(Font.DIALOG, Font.BOLD, 18));
         label1.setText("Welcome to Morse Code Decoder");
-        label1.setIcon(list);
+        label1.setIcon(list); //Morse Code Decoder image
         label1.setHorizontalTextPosition(JLabel.CENTER);
         label1.setVerticalTextPosition(JLabel.TOP);
         label1.setHorizontalAlignment(JLabel.LEFT);
         label1.setVerticalAlignment(JLabel.TOP);
         label1.setBorder(border);
-        label1.setPreferredSize(new Dimension(324,459));
-        label1.setBounds(0,0,330,464);
+        label1.setPreferredSize(new Dimension(324,459)); //fix the dimension
         cp.add(label1);
 
         text.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 20));
-        text.setEditable(false);
-        text.setForeground(Color.BLUE);
-        text.setBackground(Color.CYAN);
+        text.setEditable(false); //unable to manual key in
+        text.setForeground(Color.WHITE);
+        text.setBackground(Color.DARK_GRAY);
+        text.setBorder(border);
         cp.add(text);
-
+        //Inference the model and process the webcam stream and make predictions.
         doInference();
     }
 
@@ -211,33 +203,6 @@ public class morse {
                 .trainingWorkspaceMode(WorkspaceMode.ENABLED)
                 .inferenceWorkspaceMode(WorkspaceMode.ENABLED)
                 .build();
-    }
-
-    //    Evaluate visually the performance of the trained object detection model
-    private static void OfflineValidationWithTestDataset(RecordReaderDataSetIterator test) throws InterruptedException {
-        NativeImageLoader imageLoader = new NativeImageLoader();
-        CanvasFrame canvas = new CanvasFrame("Validate Test Dataset");
-        OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
-        org.deeplearning4j.nn.layers.objdetect.Yolo2OutputLayer yout = (org.deeplearning4j.nn.layers.objdetect.Yolo2OutputLayer) model.getOutputLayer(0);
-        Mat convertedMat = new Mat();
-        Mat convertedMat_big = new Mat();
-
-        while (test.hasNext() && canvas.isVisible()) {
-            org.nd4j.linalg.dataset.DataSet ds = test.next();
-            INDArray features = ds.getFeatures();
-            INDArray results = model.outputSingle(features);
-            List<DetectedObject> objs = yout.getPredictedObjects(results, detectionThreshold);
-            YoloUtils.nms(objs, 0.4);
-            Mat mat = imageLoader.asMat(features);
-            mat.convertTo(convertedMat, CV_8U, 255, 0);
-            int w = mat.cols() * 2;
-            int h = mat.rows() * 2;
-            resize(convertedMat, convertedMat_big, new Size(w, h));
-            convertedMat_big = drawResults(objs, convertedMat_big, w, h);
-            canvas.showImage(converter.convert(convertedMat_big));
-            canvas.waitKey();
-        }
-        canvas.dispose();
     }
 
     // Stream video frames from Webcam and run them through YOLOv2 model and get predictions
@@ -352,7 +317,7 @@ public class morse {
             rectangle(mat, new Point(x1 + 2, y2 - 2), new Point(x1 + 2 + textSize.get(0), y2 - 2 - textSize.get(1)), colormap[obj.getPredictedClass()], FILLED, 0, 0);
             putText(mat, labeltext, new Point(x1 + 2, y2 - 2), FONT_HERSHEY_DUPLEX, 1, RGB(0, 0, 0));
 
-            printoutput.getAlphabet(label, outframe, cp, text);
+            printoutput.getAlphabet(label, cp, text);
         }
         return mat;
     }
