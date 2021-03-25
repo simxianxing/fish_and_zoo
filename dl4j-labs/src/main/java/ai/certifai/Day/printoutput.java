@@ -131,6 +131,7 @@ public class printoutput {
             }
 
         }
+        //label 1 = dot, label 2 = dash, label 0 = break
         if (label.equals("1") || label.equals("2") || label.equals("0")){
             spacedone = false; //stop spacing
             outlist.add(label); //store dot (1) , dash (2) and break (0)
