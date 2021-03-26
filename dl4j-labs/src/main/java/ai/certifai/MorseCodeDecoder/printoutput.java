@@ -1,4 +1,4 @@
-package ai.certifai.Day;
+package ai.certifai.MorseCodeDecoder;
 
 import javax.swing.*;
 import java.awt.*;

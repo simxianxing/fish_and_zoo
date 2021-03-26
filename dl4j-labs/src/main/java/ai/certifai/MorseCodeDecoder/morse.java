@@ -1,4 +1,4 @@
-package ai.certifai.Day;
+package ai.certifai.MorseCodeDecoder;
 
 import org.bytedeco.javacv.CanvasFrame;
 import org.bytedeco.javacv.Frame;
@@ -63,7 +63,7 @@ public class morse {
     private static int nClasses = 6;
     private static List<String> labels;
 
-    private static File modelFilename = new File("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\m6_epoch100.zip");
+    private static File modelFilename = new File("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\MorseCodeDecoder\\m6_epoch100.zip");
     private static ComputationGraph model;
     private static Frame frame = null;
     private static final Scalar GREEN = RGB(0, 255.0, 0);
@@ -77,9 +77,9 @@ public class morse {
 
     private static JFrame outframe = new JFrame();
     private static Container cp = outframe.getContentPane();
-    private static String codeimage = "D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\MorseCodeDecoderresize.jpg";
+    private static String codeimage = "D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\MorseCodeDecoder\\MorseCodeDecoderresize.jpg";
     private static ImageIcon list = new ImageIcon(codeimage);
-    private static ImageIcon image = new ImageIcon("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\Day\\M.png");
+    private static ImageIcon image = new ImageIcon("D:\\TrainingLabs-main\\dl4j-labs\\src\\main\\java\\ai\\certifai\\MorseCodeDecoder\\M.png");
     private static JTextArea text = new JTextArea(3, 27);
 
 
@@ -208,7 +208,7 @@ public class morse {
     }
 
     // Stream video frames from Webcam and run them through YOLOv2 model and get predictions
-    static void doInference() {
+    public static void doInference() {
 
         String cameraPos = "front";
         int cameraNum = 0;
