@@ -1,0 +1,26 @@
+<annotation>
+	<folder>C:/Users/USER/Desktop/0</folder>
+	<filename>0(25).jpg</filename>
+	<path>C:/Users/USER/Desktop/0/0(25).jpg</path>
+	<source>
+		<database>unknown</database>
+	</source>
+	<size>
+		<width>178</width>
+		<height>284</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>0</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>34</xmin>
+			<ymin>32</ymin>
+			<xmax>163</xmax>
+			<ymax>168</ymax>
+		</bndbox>
+	</object>
+</annotation>

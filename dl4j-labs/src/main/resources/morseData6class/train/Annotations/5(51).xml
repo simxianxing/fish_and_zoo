@@ -1,0 +1,38 @@
+<annotation>
+	<folder>D:/5</folder>
+	<filename>5 (51).jpg</filename>
+	<path>D:/5/5 (51).jpg</path>
+	<source>
+		<database>unknown</database>
+	</source>
+	<size>
+		<width>268</width>
+		<height>188</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>5</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>55</xmin>
+			<ymin>40</ymin>
+			<xmax>147</xmax>
+			<ymax>160</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>5</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>146</xmin>
+			<ymin>37</ymin>
+			<xmax>229</xmax>
+			<ymax>166</ymax>
+		</bndbox>
+	</object>
+</annotation>

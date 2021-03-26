@@ -1,0 +1,26 @@
+<annotation>
+	<folder>C:/Users/USER/Desktop/morseCodeDecoder-20210322T074647Z-001/morseCodeDecoder</folder>
+	<filename>3(57).jpg</filename>
+	<path>C:/Users/USER/Desktop/morseCodeDecoder-20210322T074647Z-001/morseCodeDecoder/3(57).jpg</path>
+	<source>
+		<database>unknown</database>
+	</source>
+	<size>
+		<width>976</width>
+		<height>549</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>3</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>318</xmin>
+			<ymin>12</ymin>
+			<xmax>707</xmax>
+			<ymax>527</ymax>
+		</bndbox>
+	</object>
+</annotation>

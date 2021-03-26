@@ -1,0 +1,26 @@
+<annotation>
+	<folder>C:/Users/USER/Desktop/MorseCodeDataset/4</folder>
+	<filename>4 (83).jpg</filename>
+	<path>C:/Users/USER/Desktop/MorseCodeDataset/4/4 (83).jpg</path>
+	<source>
+		<database>unknown</database>
+	</source>
+	<size>
+		<width>235</width>
+		<height>215</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>4</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>55</xmin>
+			<ymin>23</ymin>
+			<xmax>185</xmax>
+			<ymax>202</ymax>
+		</bndbox>
+	</object>
+</annotation>

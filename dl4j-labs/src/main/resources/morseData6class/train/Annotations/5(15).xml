@@ -1,0 +1,26 @@
+<annotation>
+	<folder>D:/5</folder>
+	<filename>5 (15).jpg</filename>
+	<path>D:/5/5 (15).jpg</path>
+	<source>
+		<database>unknown</database>
+	</source>
+	<size>
+		<width>251</width>
+		<height>201</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>5</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>33</xmin>
+			<ymin>16</ymin>
+			<xmax>150</xmax>
+			<ymax>166</ymax>
+		</bndbox>
+	</object>
+</annotation>

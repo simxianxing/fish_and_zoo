@@ -1,0 +1,26 @@
+<annotation>
+	<folder>C:/Users/USER/Desktop/MorseCodeDataset/3</folder>
+	<filename>3 (12).jpg</filename>
+	<path>C:/Users/USER/Desktop/MorseCodeDataset/3/3 (12).jpg</path>
+	<source>
+		<database>unknown</database>
+	</source>
+	<size>
+		<width>294</width>
+		<height>171</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>3</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>235</xmin>
+			<ymin>42</ymin>
+			<xmax>279</xmax>
+			<ymax>120</ymax>
+		</bndbox>
+	</object>
+</annotation>

@@ -1,0 +1,26 @@
+<annotation>
+	<folder>D:/TrainingLabs-main/dl4j-labs/src/main/resources/morseCodeDecoder</folder>
+	<filename>3(77).jpg</filename>
+	<path>D:/TrainingLabs-main/dl4j-labs/src/main/resources/morseCodeDecoder/3(77).jpg</path>
+	<source>
+		<database>unknown</database>
+	</source>
+	<size>
+		<width>184</width>
+		<height>274</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>3</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>28</xmin>
+			<ymin>24</ymin>
+			<xmax>176</xmax>
+			<ymax>203</ymax>
+		</bndbox>
+	</object>
+</annotation>
