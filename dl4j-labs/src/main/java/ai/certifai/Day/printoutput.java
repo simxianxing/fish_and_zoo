@@ -20,14 +20,14 @@ public class printoutput {
         label = labelA; //recall predicted output from drawResults
         outlist.add(label); //start append to an empty ArrayList
 
-        //label 4 = Spacing
-        if (spacedone && label.equals("4")){
+        //label 3 = Spacing
+        if (spacedone && label.equals("3")){
             predicted = ' '; //final prediction
             spacedone = false; //to avoid multiple spacing
             getWindow(predicted, cpA, textA); //feed the final prediction to GUI
         }
-        //label 3 = Start new character
-        if (label.equals("3")){
+        //label 4 = Start new character
+        if (label.equals("4")){
             startnewchar = true; //start new character
             spacedone = true; //enable to get space
             outlist.clear(); //clear ArrayList to start new character

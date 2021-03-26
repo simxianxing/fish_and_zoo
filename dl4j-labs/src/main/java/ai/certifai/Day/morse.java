@@ -71,7 +71,7 @@ public class morse {
     private static final Scalar RED = RGB(255, 0, 0);
     private static final Scalar BLUE = RGB(0, 0, 255);
     private static final Scalar WHITE = RGB(255, 255, 255);
-    private static final Scalar BLACK = RGB(100, 100, 100);
+    private static final Scalar BLACK = RGB(100, 100, 100); //DARK GREY
     private static Scalar[] colormap = {GREEN, YELLOW, RED, BLUE, BLACK, WHITE};
     private static String labeltext = null;
 
@@ -140,7 +140,9 @@ public class morse {
         outframe.setSize(350,615);
         outframe.setResizable(false);
         outframe.setIconImage(image.getImage()); //icon M.png
+
         Border border = BorderFactory.createLineBorder(Color.BLACK, 2); //border
+
         JLabel label1 = new JLabel(); //use for table
         label1.setFont(new Font(Font.DIALOG, Font.BOLD, 18));
         label1.setText("Welcome to Morse Code Decoder");
